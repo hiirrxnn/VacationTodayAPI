@@ -31,7 +31,7 @@ app.use(cors({
 
 async function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    const { token } = req.cookies;
+    const token = req.cookies?.token;
     jwt.verify(token, jwtSecret, {}, (err, userData) => {
       if (err) reject(err);
       resolve(userData);
@@ -74,7 +74,7 @@ app.post('/login', async (req, res) => {
       if (err) {
         return res.status(500).json({ error: 'Internal server error during token generation.' });
       }
-      res.cookie('token', token).json(userDoc);
+      res.cookie('token', token,{ sameSite: 'none', secure: true }).json(userDoc);
     });
   } catch (err) {
     res.status(500).json({ error: 'Internal server error.' });
@@ -83,7 +83,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/profile', async (req, res) => {
   try {
-    const { token } = req.cookies;
+    const token = req.cookies?.token;
     if (!token) {
       return res.status(401).json('No token provided');
     }
@@ -127,7 +127,7 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
 });
 
 app.post('/places', async (req, res) => {
-  const { token } = req.cookies;
+  const token = req.cookies?.token;
   const { title, address, photos, description, checkIn, checkOut, perks, price, maxNoOfGuests, extraInfo } = req.body;
   try {
     const userData = await getUserDataFromReq(req);
@@ -151,7 +151,7 @@ app.post('/places', async (req, res) => {
 });
 
 app.put('/places', async (req, res) => {
-  const { token } = req.cookies;
+  const token = req.cookies?.token;
   const { id, title, address, photos, description, checkIn, checkOut, perks, extraInfo, maxNoOfGuests, price } = req.body;
   try {
     const userData = await getUserDataFromReq(req);
