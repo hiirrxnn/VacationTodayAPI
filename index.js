@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
 app.use(cors({
-  origin: true,
+  origin: process.env.CLIENT_URL,
   credentials: true,
 }));
 
